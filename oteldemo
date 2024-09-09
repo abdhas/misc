@@ -2,7 +2,7 @@ FROM gradle:8-jdk17 AS builder
 
 WORKDIR /usr/src/app/
 
-COPY ./src/frontendservice/ ./
+COPY ./src/checkoutservice/ ./
 COPY ./pb/ ./src/main/proto/
 RUN gradle shadowJar
 
@@ -13,10 +13,10 @@ FROM gcr.io/distroless/java17-debian11
 ARG version=1.31.0
 WORKDIR /usr/src/app/
 
-COPY --from=builder /usr/src/app/build/libs/frontendservice-1.0-all.jar ./
+COPY --from=builder /usr/src/app/build/libs/checkoutservice-1.0-all.jar ./
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 ENV OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp-collector-prod-eu-west-3.grafana.net/otlp
 
 
-ENTRYPOINT [ "java", "-jar", "frontendservice-1.0-all.jar" ]
+ENTRYPOINT [ "java", "-jar", "checkoutservice-1.0-all.jar" ]
